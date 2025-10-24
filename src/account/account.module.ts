@@ -7,12 +7,15 @@ import { AccountSession } from './entities/account-session.entity';
 import { Account } from './entities/account.entity';
 
 @Module({
-  imports: [SequelizeModule.forFeature([
-    AccountUser,
-    AccountSession,
-    Account,
-  ])],
+  imports: [
+    SequelizeModule.forFeature([
+      AccountUser,
+      AccountSession,
+      Account,
+    ]),
+  ],
   controllers: [AccountController],
   providers: [AccountService],
+  exports: [AccountService],
 })
 export class AccountModule {}

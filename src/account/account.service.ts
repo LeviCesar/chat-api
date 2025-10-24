@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { CreatedResponseDto, MessageResponseDto } from './dto/responses.dto';
@@ -6,6 +6,8 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Account } from './entities/account.entity';
 import { AccountUser } from './entities/account-user.entity';
 import { AccountSession } from './entities/account-session.entity';
+import { SessionDto } from './dto/session.dto';
+import { AuthAccountDto } from './dto/auth-account.dto';
 const bcrypt = require('bcrypt');
 
 @Injectable()
@@ -30,6 +32,59 @@ export class AccountService {
     } catch(err) {
       throw new BadRequestException("failed creating account");
     }
+  }
+
+  async authAccount(username: string, password: string): Promise<AuthAccountDto> {
+    let account = await this.accountModel.findOne({
+      include: [{
+        model: AccountUser,
+        as: 'user',             // use the alias you defined in the association, or remove if none
+        where: { username },    // search on the hasOne side
+        required: true,         // makes INNER JOIN so only matching accounts are returned
+        attributes: ['id', 'username', 'password'],
+      }],
+    });
+
+    if (!account) {
+      throw new NotFoundException("user not found");
+    }
+
+    if (!await bcrypt.compare(password, account?.user.password)) {
+      throw new UnauthorizedException("password wrong");
+    }
+
+    return {
+      id: account.id,
+      username: account?.user.username,
+    }
+  }
+
+  async startSession(accountId: number, jti: string): Promise<void> {
+    let account = await this.accountModel.findOne({
+      where: {
+        id: accountId,
+      }
+    });
+
+    if (!account) {
+      throw new UnauthorizedException("account not found");
+    }
+
+    await account.createSession({ id: jti });
+  }
+
+  async activeSession(id: string): Promise<boolean> {
+    let account = await this.accountModel.findOne({
+      include: [{
+        model: AccountSession,
+        as: 'sessions',             // use the alias you defined in the association, or remove if none
+        where: { id },    // search on the hasOne side
+        required: true,         // makes INNER JOIN so only matching accounts are returned
+        attributes: ['id', 'isActive'],
+      }],
+    });
+
+    return account?.sessions[0].isActive || false;
   }
 
   findAll() {

@@ -7,6 +7,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Account } from './account/entities/account.entity';
 import { AccountSession } from './account/entities/account-session.entity';
 import { AccountUser } from './account/entities/account-user.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { AccountUser } from './account/entities/account-user.entity';
       synchronize: true,
     }),
 
-    AccountModule
+    AccountModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],

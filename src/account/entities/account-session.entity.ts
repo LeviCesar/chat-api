@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import { Column, Model, Table, Unique } from 'sequelize-typescript';
+import { Column, Model, PrimaryKey, Table, Unique } from 'sequelize-typescript';
 
 @Table({
   tableName: "session",
@@ -7,14 +7,16 @@ import { Column, Model, Table, Unique } from 'sequelize-typescript';
   paranoid: true,
 })
 export class AccountSession extends Model {
-  @Column
-  declare encode: string;
+  @PrimaryKey
+  @Column({
+    type: DataTypes.UUID,
+  })
+  declare id: string;
 
-  @Column
-  declare refreshToken: string;
-  
-  @Column
-  declare accessToken: string;
+  @Column({
+    defaultValue: true
+  })
+  declare isActive: boolean;
   
   @Unique
   @Column({

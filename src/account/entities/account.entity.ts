@@ -21,4 +21,6 @@ export class Account extends Model {
 
   @HasMany(() => AccountSession, "accountId")
   declare sessions: AccountSession[];
+  
+  declare createSession: HasOneCreateAssociationMixin<AccountSession>;
 }
