@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AccountService } from 'src/account/account.service';
 import { AuthDto } from './dto/auth.dto';
 import { TokenDto } from './dto/token.dto';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
 import { DateTime } from 'luxon';
+import { RefreshAuthDto } from './dto/refresh-auth.dto';
+import { ITokenJwt } from './interfaces/token-jwt.interface';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +23,7 @@ export class AuthService {
     const exp = Math.floor(now.plus({ minutes: 15 }).toSeconds()); // env
     const jti = uuidv4();
 
-    const payload = {
+    const payload: ITokenJwt = {
       sub: account.id,
       username: account.username,
       exp,
@@ -44,19 +46,37 @@ export class AuthService {
     }
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async refreshSession(refreshDto: RefreshAuthDto): Promise<TokenDto> {
+    try {
+      const payload: ITokenJwt = await this.jwtService.verifyAsync(
+        refreshDto.refreshToken,
+        {
+          secret: '633fcb1be22daf1851f91fa722dcf0a8ab55c833befdb9bfdaac84ded36be530', // env
+        }
+      );
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+      if (payload.tokenType != 'rt+jwt') {
+        throw new UnauthorizedException('invalid token');
+      }
+  
+      if (!await this.accountService.activeSession(payload.jti)) {
+        throw new UnauthorizedException(); 
+      }
 
-  // update(id: number, updateAuthDto: UpdateAuthDto) {
-  //   return `This action updates a #${id} auth`;
-  // }
+      const now = DateTime.now().setZone('Europe/Paris'); // env
+      const iat = Math.floor(now.toSeconds());
+      const exp = Math.floor(now.plus({ minutes: 15 }).toSeconds()); // env
+      
+      payload.tokenType = 'at+jwt';
+      payload.iat = iat;
+      payload.exp = exp;
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+      return {
+        accessToken: await this.jwtService.signAsync(payload),
+        refreshToken: refreshDto.refreshToken,
+      }
+    } catch {
+      throw new UnauthorizedException();
+    }
   }
 }

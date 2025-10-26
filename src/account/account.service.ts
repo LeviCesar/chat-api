@@ -63,24 +63,37 @@ export class AccountService {
     let account = await this.accountModel.findOne({
       where: {
         id: accountId,
-      }
+      },
+      include: [
+        {
+          model: AccountSession,
+          as: "sessions",
+          where: { isActive: true },
+          required: false,
+          attributes: ["id"]
+        }
+      ]
     });
 
     if (!account) {
       throw new UnauthorizedException("account not found");
     }
 
+    if (account.sessions.length >= 1) {
+      throw new UnauthorizedException("account is logged in another device");
+    }
+
     await account.createSession({ id: jti });
   }
 
-  async activeSession(id: string): Promise<boolean> {
+  async activeSession(sessionId: string): Promise<boolean> {
     let account = await this.accountModel.findOne({
       include: [{
         model: AccountSession,
-        as: 'sessions',             // use the alias you defined in the association, or remove if none
-        where: { id },    // search on the hasOne side
-        required: true,         // makes INNER JOIN so only matching accounts are returned
-        attributes: ['id', 'isActive'],
+        as: 'sessions',
+        where: { id: sessionId },
+        required: true,
+        attributes: ['isActive'],
       }],
     });
 

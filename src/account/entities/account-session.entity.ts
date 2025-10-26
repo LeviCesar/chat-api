@@ -18,7 +18,6 @@ export class AccountSession extends Model {
   })
   declare isActive: boolean;
   
-  @Unique
   @Column({
     type: DataTypes.INTEGER
   })
