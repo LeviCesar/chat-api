@@ -44,10 +44,10 @@ export class AuthGuard implements CanActivate {
         }
       );
 
-      if (payload.tokenType == "at+jwt") {
+      if (payload.tokenType != "at+jwt") {
         throw new BadRequestException("invalid token");
       }
-
+      
       if (!await this.accountService.activeSession(payload.jti)) {
         throw new UnauthorizedException(); 
       }

@@ -79,4 +79,8 @@ export class AuthService {
       throw new UnauthorizedException();
     }
   }
+
+  async finishSession(accountId: number): Promise<void> {
+    await this.accountService.finishSession(accountId);
+  }
 }

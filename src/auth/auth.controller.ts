@@ -8,6 +8,7 @@ import { RefreshAuthDto } from './dto/refresh-auth.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
   signIn(@Body() authDto: AuthDto) {
@@ -22,8 +23,9 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  @HttpCode(HttpStatus.OK)
+  @Delete('logout')
+  finsihSession(@Request() req) {
+    return this.authService.finishSession(req.user.sub);
   }
 }

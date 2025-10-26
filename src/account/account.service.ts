@@ -6,7 +6,6 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Account } from './entities/account.entity';
 import { AccountUser } from './entities/account-user.entity';
 import { AccountSession } from './entities/account-session.entity';
-import { SessionDto } from './dto/session.dto';
 import { AuthAccountDto } from './dto/auth-account.dto';
 const bcrypt = require('bcrypt');
 
@@ -36,13 +35,15 @@ export class AccountService {
 
   async authAccount(username: string, password: string): Promise<AuthAccountDto> {
     let account = await this.accountModel.findOne({
-      include: [{
-        model: AccountUser,
-        as: 'user',             // use the alias you defined in the association, or remove if none
-        where: { username },    // search on the hasOne side
-        required: true,         // makes INNER JOIN so only matching accounts are returned
-        attributes: ['id', 'username', 'password'],
-      }],
+      include: [
+        {
+          model: AccountUser,
+          as: 'user',             // use the alias you defined in the association, or remove if none
+          where: { username },    // search on the hasOne side
+          required: true,         // makes INNER JOIN so only matching accounts are returned
+          attributes: ['id', 'username', 'password'],
+        }
+      ],
     });
 
     if (!account) {
@@ -61,9 +62,7 @@ export class AccountService {
 
   async startSession(accountId: number, jti: string): Promise<void> {
     let account = await this.accountModel.findOne({
-      where: {
-        id: accountId,
-      },
+      where: { id: accountId },
       include: [
         {
           model: AccountSession,
@@ -86,7 +85,7 @@ export class AccountService {
     await account.createSession({ id: jti });
   }
 
-  async activeSession(sessionId: string): Promise<boolean> {
+  async  activeSession(sessionId: string): Promise<boolean> {
     let account = await this.accountModel.findOne({
       include: [{
         model: AccountSession,
@@ -98,6 +97,33 @@ export class AccountService {
     });
 
     return account?.sessions[0].isActive || false;
+  }
+
+  async finishSession(accountId: number): Promise<void> {
+    let account = await this.accountModel.findOne({
+      where: { id: accountId },
+      include: [
+        {
+          model: AccountSession,
+          as: "sessions",
+          where: { isActive: true },
+          required: false,
+          attributes: ['id', 'isActive'],
+        }
+      ]
+    });
+
+    if (!account) {
+      throw new NotFoundException("account not found");
+    }
+
+    let accountSession: AccountSession = await account.sessions[0] || null;
+    if (!accountSession) {
+      throw new NotFoundException("session not found");
+    }
+
+    accountSession.isActive = false;
+    await accountSession.save();
   }
 
   findAll() {
