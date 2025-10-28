@@ -1,12 +1,13 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
-import { CreatedResponseDto, MessageResponseDto } from './dto/responses.dto';
+import { CreatedResponseDto } from './dto/responses.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Account } from './entities/account.entity';
 import { AccountUser } from './entities/account-user.entity';
 import { AccountSession } from './entities/account-session.entity';
 import { AuthAccountDto } from './dto/auth-account.dto';
+import { Op } from 'sequelize';
 const bcrypt = require('bcrypt');
 
 @Injectable()
@@ -15,7 +16,7 @@ export class AccountService {
     @InjectModel(Account) private accountModel: typeof Account,
   ) {}
 
-  async create(createAccountDto: CreateAccountDto): Promise<CreatedResponseDto | MessageResponseDto> {
+  async create(createAccountDto: CreateAccountDto): Promise<CreatedResponseDto> {
     const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10);
     const hashedPassword = await bcrypt.hash(createAccountDto.password, saltRounds);
     createAccountDto.password = hashedPassword;
@@ -124,6 +125,17 @@ export class AccountService {
 
     accountSession.isActive = false;
     await accountSession.save();
+  }
+
+  async findAllById(ids: number[]): Promise<number[]> {
+    if (!ids || ids.length === 0) return [];
+
+    let accounts = await this.accountModel.findAll({
+      where: { id: { [Op.in]: ids }, deletedAt: null },
+      attributes: ['id'],
+    })
+
+    return accounts.map(elem => elem.id);
   }
 
   findAll() {

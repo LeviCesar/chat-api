@@ -11,16 +11,9 @@ import { HasManyCreateAssociationMixin, HasOneCreateAssociationMixin } from "seq
 export class Account extends Model {
   @HasOne(() => AccountUser, "accountId")
   declare user: AccountUser;
-
   declare createUser: HasOneCreateAssociationMixin<AccountUser>;
-  // declare setUser: HasOneSetAssociationMixin<
-  //   AccountUser,
-  //   /* this is the type of the primary key of the target */
-  //   AccountUser['accountId']
-  // >;
 
   @HasMany(() => AccountSession, "accountId")
   declare sessions: AccountSession[];
-  
   declare createSession: HasManyCreateAssociationMixin<AccountSession, 'accountId'>;
 }
