@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateChatDto } from './dto/create-chat.dto';
 // import { UpdateChatDto } from './dto/update-chat.dto';
-import { Chat } from './entities/chat.entity';
+import { Chat } from './models/chat.entity';
 import { InjectModel } from '@nestjs/sequelize';
 import { AccountService } from 'src/account/account.service';
 import { CreatedResponseDto } from 'src/account/dto/responses.dto';

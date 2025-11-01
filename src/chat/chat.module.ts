@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatController } from './chat.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Chat } from './entities/chat.entity';
+import { Chat } from './models/chat.entity';
 import { AccountModule } from 'src/account/account.module';
-import { ChatIntegrant } from './entities/chat-integrants.entity';
+import { ChatIntegrant } from './models/chat-integrants.entity';
 
 @Module({
   imports: [

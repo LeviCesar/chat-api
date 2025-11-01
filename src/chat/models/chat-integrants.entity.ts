@@ -1,6 +1,6 @@
 import { Table, Column, Model, ForeignKey } from 'sequelize-typescript';
 import { Chat } from './chat.entity';
-import { Account } from 'src/account/entities/account.entity';
+import { Account } from 'src/account/models/account.entity';
 
 @Table({ 
   tableName: 'chat_integrants', 

@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { AccountController } from './account.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { AccountUser } from './entities/account-user.entity';
-import { AccountSession } from './entities/account-session.entity';
-import { Account } from './entities/account.entity';
+import { AccountUser } from './models/account-user.entity';
+import { AccountSession } from './models/account-session.entity';
+import { Account } from './models/account.entity';
 
 @Module({
   imports: [
