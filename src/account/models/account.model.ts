@@ -1,6 +1,6 @@
 import { HasMany, HasOne, Table, Model } from "sequelize-typescript";
-import { AccountSession } from "./account-session.entity"
-import { AccountUser } from "./account-user.entity"
+import { AccountSession } from "./account-session.model"
+import { AccountUser } from "./account-user.model"
 import { HasManyCreateAssociationMixin, HasOneCreateAssociationMixin } from "sequelize";
 
 @Table({

@@ -1,8 +1,7 @@
 import { BelongsToManySetAssociationsMixin } from "sequelize";
-import { BelongsToMany, Column, DataType, PrimaryKey, Table, Model, HasMany } from "sequelize-typescript";
-import { Account } from "../../account/models/account.entity";
-import { ChatIntegrant } from "./chat-integrants.entity";
-import { ChatMessage } from "./chat-message.entity";
+import { BelongsToMany, Column, DataType, PrimaryKey, Table, Model } from "sequelize-typescript";
+import { Account } from "../../account/models/account.model";
+import { ChatIntegrant } from "./chat-integrants.model";
 
 @Table({
   tableName: "chat",
@@ -25,7 +24,4 @@ export class Chat extends Model {
 
   @Column(DataType.TEXT)
   declare privateKey: string;
-
-  @HasMany(() => ChatMessage)
-  declare messages: ChatMessage[];
 }
