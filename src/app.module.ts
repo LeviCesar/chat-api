@@ -10,9 +10,9 @@ import { AccountUser } from './account/models/account-user.model';
 import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { Chat } from './chat/models/chat.model';
-import { ChatIntegrant } from './chat/models/chat-integrants.model';
 import { ChatRoomModule } from './chat-room/chat-room.module';
 import { ChatMessage } from './chat/models/chat-message.model';
+import { ChatIntegrants } from './chat/models/chat-integrants.model';
 
 @Module({
   imports: [
@@ -28,7 +28,7 @@ import { ChatMessage } from './chat/models/chat-message.model';
         AccountSession,
         Account,
         Chat,
-        ChatIntegrant,
+        ChatIntegrants,
         ChatMessage,
       ],
       autoLoadModels: true,

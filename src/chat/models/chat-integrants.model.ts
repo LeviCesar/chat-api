@@ -1,19 +1,18 @@
-import { Table, Column, Model, ForeignKey } from 'sequelize-typescript';
-import { Chat } from './chat.model';
-import { Account } from 'src/account/models/account.model';
+import { Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import { Account } from "src/account/models/account.model";
+import { Chat } from "./chat.model";
 
-@Table({ 
-  tableName: 'chat_integrants', 
+@Table({
+  tableName: "chat_integrants",
   underscored: true,
   paranoid: true,
-  timestamps: false,
 })
-export class ChatIntegrant extends Model {
-  @ForeignKey(() => Chat)
-  @Column
-  declare chatId: string;
-
+export class ChatIntegrants extends Model {
   @ForeignKey(() => Account)
   @Column
-  declare accountId: number;
+  declare integrantId: number;
+
+  @ForeignKey(() => Chat)
+  @Column(DataType.UUID)
+  declare chatId: string;
 }

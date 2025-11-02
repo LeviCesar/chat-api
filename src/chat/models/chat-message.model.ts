@@ -8,15 +8,14 @@ import { Account } from "src/account/models/account.model";
   paranoid: true,
 })
 export class ChatMessage extends Model {
-  @Length({ min: 3, max: 300 })
-  @Column
-  declare message: string;
-  
-  @ForeignKey(() => Chat)
+  @ForeignKey(() => Account)
   @Column(DataType.UUID)
-  declare chat: string;
+  declare chatId: string;
 
   @ForeignKey(() => Account)
   @Column
-  declare account: number;
+  declare integrant: number;
+
+  @Column(DataType.TEXT)
+  declare message: string;
 }

@@ -1,7 +1,8 @@
-import { BelongsToManySetAssociationsMixin } from "sequelize";
-import { BelongsToMany, Column, DataType, PrimaryKey, Table, Model } from "sequelize-typescript";
+import { Column, DataType, PrimaryKey, Table, Model, HasMany, BelongsToMany } from "sequelize-typescript";
 import { Account } from "../../account/models/account.model";
-import { ChatIntegrant } from "./chat-integrants.model";
+import { ChatMessage } from "./chat-message.model";
+import { ChatIntegrants } from "./chat-integrants.model";
+import { HasManyCreateAssociationMixin, BelongsToManySetAssociationsMixin } from "sequelize";
 
 @Table({
   tableName: "chat",
@@ -14,12 +15,13 @@ export class Chat extends Model {
   declare id: string;
 
   @Column
-  declare title: string;
+  declare name: string;
 
-  @BelongsToMany(() => Account, { through: () => ChatIntegrant })
+  @BelongsToMany(() => Account, () => ChatIntegrants)
   declare integrants: Account[];
   declare setIntegrants: BelongsToManySetAssociationsMixin<Account, Account['id']>;
-
-  @Column(DataType.TEXT)
-  declare privateKey: string;
+  
+  @HasMany(() => ChatMessage, 'chatId')
+  declare messages: ChatMessage[];
+  declare createMessage: HasManyCreateAssociationMixin<ChatMessage, 'chatId'>;
 }

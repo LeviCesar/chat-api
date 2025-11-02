@@ -2,15 +2,13 @@ import { DataTypes } from 'sequelize';
 import { Column, Model, PrimaryKey, Table, Unique } from 'sequelize-typescript';
 
 @Table({
-  tableName: "session",
+  tableName: "account_session",
   underscored: true,
   paranoid: true,
 })
 export class AccountSession extends Model {
   @PrimaryKey
-  @Column({
-    type: DataTypes.UUID,
-  })
+  @Column(DataTypes.UUID)
   declare id: string;
 
   @Column({
@@ -18,8 +16,6 @@ export class AccountSession extends Model {
   })
   declare isActive: boolean;
   
-  @Column({
-    type: DataTypes.INTEGER
-  })
+  @Column(DataTypes.INTEGER)
   declare accountId: number;
 }

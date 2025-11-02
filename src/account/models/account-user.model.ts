@@ -1,7 +1,7 @@
 import { Column, DataType, Model, Table, Unique } from 'sequelize-typescript';
 
 @Table({
-  tableName: "user",
+  tableName: "account_user",
   underscored: true,
   paranoid: true,
 })
