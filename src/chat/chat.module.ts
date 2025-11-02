@@ -5,12 +5,14 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Chat } from './models/chat.model';
 import { AccountModule } from 'src/account/account.module';
 import { ChatIntegrant } from './models/chat-integrants.model';
+import { ChatMessage } from './models/chat-message.model';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([
       Chat,
       ChatIntegrant,
+      ChatMessage,
     ]),
     AccountModule,
   ],

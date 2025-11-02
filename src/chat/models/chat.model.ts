@@ -10,9 +10,7 @@ import { ChatIntegrant } from "./chat-integrants.model";
 })
 export class Chat extends Model {
   @PrimaryKey
-  @Column({
-    type: DataType.UUID,
-  })
+  @Column(DataType.UUID)
   declare id: string;
 
   @Column

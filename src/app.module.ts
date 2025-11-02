@@ -12,6 +12,7 @@ import { ChatModule } from './chat/chat.module';
 import { Chat } from './chat/models/chat.model';
 import { ChatIntegrant } from './chat/models/chat-integrants.model';
 import { ChatRoomModule } from './chat-room/chat-room.module';
+import { ChatMessage } from './chat/models/chat-message.model';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ChatRoomModule } from './chat-room/chat-room.module';
         Account,
         Chat,
         ChatIntegrant,
+        ChatMessage,
       ],
       autoLoadModels: true,
       synchronize: true,
